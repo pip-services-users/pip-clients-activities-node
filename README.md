@@ -1,10 +1,11 @@
-# Activities Microservice Client SDK for Node.js
+# Party Activities Microservice Client SDK for Node.js
 
 This is a Node.js client SDK for [pip-services-activities](https://github.com/pip-services/pip-services-activities) microservice.
 It provides an easy to use abstraction over communication protocols:
 
-* HTTP/REST client
+* HTTP client
 * Seneca client (see http://www.senecajs.org)
+* Direct client for monolytic deployments
 * Null client to be used in testing
 
 <a name="links"></a> Quick Links:
@@ -39,14 +40,14 @@ npm update
 
 Inside your code get the reference to the client SDK
 ```javascript
-var sdk = new require('pip-clients-activities-node').Version1;
+var sdk = new require('pip-clients-activities-node');
 ```
 
 Define client configuration parameters that match configuration of the microservice external API
 ```javascript
 // Client configuration
 var config = {
-    endpoint: {
+    connection: {
         protocol: 'http',
         host: 'localhost', 
         port: 8007
@@ -57,10 +58,10 @@ var config = {
 Instantiate the client and open connection to the microservice
 ```javascript
 // Create the client instance
-var client = sdk.ActivitiesRestClient(config);
+var client = sdk.ActivitiesHttpClientV1(config);
 
 // Connect to the microservice
-client.open(function(err) {
+client.open(null, function(err) {
     if (err) {
         console.error('Connection to the microservice failed');
         console.error(err);
@@ -106,7 +107,7 @@ client.getPartyActivities(
         skip: 0,
         take: 10
     },
-    function(err, activities) {
+    function(err, page) {
     ...    
     }
 );

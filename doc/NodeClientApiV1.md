@@ -1,25 +1,25 @@
-# Client API (version 1) <br/> Activities Microservices Client SDK for Node.js
+# Client API (version 1) <br/> Party Activities Microservices Client SDK for Node.js
 
-Node.js client API for Activities microservice is a thin layer on the top of
+Node.js client API for Party activities microservice is a thin layer on the top of
 communication protocols. It hides details related to specific protocol implementation
 and provides high-level API to access the microservice for simple and productive development.
 
 * [Installation](#install)
 * [Getting started](#get_started)
-* [Reference class](#class1)
-* [PartyActivity class](#class2)
-* [PartyActivityPage class](#class3)
-* [IActivitiesClient interface](#interface)
-    - [init()](#operation1)
-    - [open()](#operation2)
-    - [close()](#operation3)
+* [ReferenceV1 class](#class1)
+* [PartyActivityV1 class](#class2)
+* [DataPage<PartyActivityV1> class](#class3)
+* [IActivitiesClientV1 interface](#interface)
+    - [setReferences()](#operation1)
+    - [open(correlationId, )](#operation2)
+    - [close(correlationId, )](#operation3)
     - [getPartyActivities()](#operation4)
     - [logPartyActivity()](#operation5)
     - [batchPartyActivities()](#operation6)
     - [deletePartyActivities()](#operation7)
-* [ActivitiesRestClient class](#client_rest)
-* [ActivitiesSenecaClient class](#client_seneca)
-* [ActivitiesNullClient class](#client_null)
+* [ActivitiesHttpClientV1 class](#client_rest)
+* [ActivitiesSenecaClientV1 class](#client_seneca)
+* [ActivitiesNullClientV1 class](#client_null)
 
 ## <a name="install"></a> Installation
 
@@ -30,7 +30,7 @@ To work with the client SDK add dependency into package.json file:
     ...
     "dependencies": {
         ....
-        "pip-clients-activities-node": "git+ssh://git@github.com:pip-services/pip-clients-activities-node.git",
+        "pip-clients-activities-node": "^1.0.*",
         ...
     }
 }
@@ -46,33 +46,28 @@ npm install
 npm update
 ```
 
-If you are using Typescript, add the following type definition where compiler can find it
-```javascript
-/// <reference path="../node_modules/pip-clients-activities-node/module.d.ts" />
-```
-
 ## <a name="get_started"></a> Getting started
 
 This is a simple example on how to work with the microservice using REST client:
 
 ```javascript
 // Get Client SDK for Version 1 
-var sdk = new require('pip-clients-activities-node').Version1;
+var sdk = new require('pip-clients-activities-node');
 
 // Client configuration
 var config = {
-    transport: {
-        type: 'http',
+    connection: {
+        protocol: 'http',
         host: 'localhost', 
         port: 8007
     }
 };
 
 // Create the client instance
-var client = sdk.ActivitiesRestClient(config);
+var client = sdk.ActivitiesHttpClientV1(config);
 
 // Open client connection to the microservice
-client.open(function(err) {
+client.open(correlationId, null, function(err) {
     if (err) {
         console.error(err);
         return; 
@@ -82,6 +77,7 @@ client.open(function(err) {
         
     // Log party activity
     client.logPartyActivity(
+        null,
         { 
             type: 'signup',
             party: {
@@ -102,6 +98,7 @@ client.open(function(err) {
     
             // Get the list system activities
             client.getPartyActivities(
+                null,
                 {
                     party_id: '123',
                     start: new Date(now.getTime() - 24 * 3600 * 1000),
@@ -112,17 +109,17 @@ client.open(function(err) {
                     skip: 0,
                     take: 10
                 }
-                function (err, activities) {
+                function (err, page) {
                     if (err) {
                         console.error(err);
                         return;
                     }
                     
                     console.log('Activities performed by party were');
-                    console.log(activities.data);
+                    console.log(page.data);
                     
                     // Close connection
-                    client.close(); 
+                    client.close(correlationId, ); 
                 }
             );
         }
@@ -130,7 +127,7 @@ client.open(function(err) {
 });
 ```
 
-### <a name="class1"></a> Reference class
+### <a name="class1"></a> ReferenceV1 class
 
 Represents a reference to a particular item specified by id, type and name. 
 
@@ -139,7 +136,7 @@ Represents a reference to a particular item specified by id, type and name.
 - type: string - item type
 - name: string - item name
 
-### <a name="class2"></a> PartyActivity class
+### <a name="class2"></a> PartyActivityV1 class
 
 Represents a record of a party activity performed in the past. 
 Each activity record is related to:
@@ -166,37 +163,37 @@ Represents a paged result with subset of requested PartyActivity objects
 - data: [PartyActivity] - array of retrieved PartyActivity page
 - count: int - total number of objects in retrieved resultset
 
-## <a name="interface"></a> IActivitiesClient interface
+## <a name="interface"></a> IActivitiesClientV1 interface
 
-If you are using Typescript, you can use IActivitiesClient as a common interface across all client implementations. 
-If you are using plain Javascript, you shall not worry about IActivitiesClient interface. You can just expect that
+If you are using Typescript, you can use IActivitiesClientV1 as a common interface across all client implementations. 
+If you are using plain Javascript, you shall not worry about IActivitiesClientV1 interface. You can just expect that
 all methods defined in this interface are implemented by all client classes.
 
 ```javascript
-interface IActivitiesClient {
-    init(refs, callback);
-    open(callback);
-    close(callback);
-    getPartyActivities(filter, paging, callback);
-    logPartyActivity(activity, callback);
-    batchPartyActivities(activities, callback);
-    deletePartyActivities(filter, callback);
+interface IActivitiesClientV1 {
+    setReferences(references);
+    open(correlationId, callback);
+    close(correlationId, callback);
+    getPartyActivities(correlationId, filter, paging, callback);
+    logPartyActivity(correlationId, activity, callback);
+    batchPartyActivities(correlationId, activities, callback);
+    deletePartyActivities(correlationId, filter, callback);
 }
 ```
 
-### <a name="operation1"></a> init(refs, callback)
+### <a name="operation1"></a> setReferences(references)
 
 Initializes client references. This method is optional. It is used to set references 
 to logger or performance counters.
 
 **Arguments:**
 - refs: References - references to other components 
-  - log: ILog - reference to logger
-  - countes: ICounters - reference to performance counters
+  - log: ILogger - reference to logger
+  - counters: ICounters - reference to performance counters
 - callback: (err) => void - callback function
   - err - Error or null is no error occured
 
-### <a name="operation2"></a> open(callback)
+### <a name="operation2"></a> open(correlationId, callback)
 
 Opens connection to the microservice
 
@@ -204,7 +201,7 @@ Opens connection to the microservice
 - callback: (err) => void - callback function
   - err - Error or null is no error occured
 
-### <a name="operation3"></a> close(callback)
+### <a name="operation3"></a> close(correlationId, callback)
 
 Closes connection to the microservice
 
@@ -212,21 +209,24 @@ Closes connection to the microservice
 - callback: (err) => void - callback function
   - err - Error or null is no error occured
 
-### <a name="operation4"></a> getPartyActivities(filter, paging, callback)
+### <a name="operation4"></a> getPartyActivities(correlationId, filter, paging, callback)
 
 Retrieves a list of party activities by specified criteria
 
 **Arguments:** 
+- correlationId: string - (optional) unique id that identifies distributed transaction
 - filter: object - filter parameters
-    - type: string - (optional) type of activities
-    - include_types: string[] - (optional) array of activities types to include into results
-    - exclude_types: string[] - (optional) array of activities types to exclude from results
-    - party_id: string - (optional) unique id of party who performed the activity
-    - ref_id: string - (optional) unique id of related object
-    - parent_id: string - (optional) unique if of parent of related object
-    - ref_party_id: string - (optional) unique id of 3rd party
-    - start: Date - (optional) start of the time range
-    - end: Date - (optional) end of the time range
+  - id: string - (optional) unique section id
+  - search: string - (optional) search by id substring
+  - type: string - (optional) type of activities
+  - include_types: string[] - (optional) array of activities types to include into results
+  - exclude_types: string[] - (optional) array of activities types to exclude from results
+  - party_id: string - (optional) unique id of party who performed the activity
+  - ref_id: string - (optional) unique id of related object
+  - parent_id: string - (optional) unique if of parent of related object
+  - ref_party_id: string - (optional) unique id of 3rd party
+  - from_time: Date - (optional) start of the time range
+  - to_time: Date - (optional) end of the time range
 - paging: object - paging parameters
   - paging: bool - (optional) true to enable paging and return total count
   - skip: int - (optional) start of page (default: 0). Operation returns paged result
@@ -235,54 +235,59 @@ Retrieves a list of party activities by specified criteria
   - err: Error - occured error or null for success
   - page: PartyActivityPage - retrieved PartyActivity objects in paged format
 
-### <a name="operation5"></a> logPartyActivity(activity, callback)
+### <a name="operation5"></a> logPartyActivity(correlationId, activity, callback)
 
 Log a single party activity
 
 **Arguments:** 
+- correlationId: string - (optional) unique id that identifies distributed transaction
 - activity: PartyActivity - party activity to be logged
 - callback: (err, activity) => void - callback function
   - err: Error - occured error or null for success
   - activity: PartyActivity - logged party activity
 
-### <a name="operation6"></a> batchPartyActivities(activities, callback)
+### <a name="operation6"></a> batchPartyActivities(correlationId, activities, callback)
 
 Log multiple party activities
 
 **Arguments:** 
+- correlationId: string - (optional) unique id that identifies distributed transaction
 - activities: [PartyActivity] - array of party activities to be logged
 - callback: (err) => void - callback function
   - err: Error - occured error or null for success
 
-### <a name="operation7"></a> deletePartyActivities(filter, callback)
+### <a name="operation7"></a> deletePartyActivities(correlationId, filter, callback)
 
 Deletes party activities that satisfy specified criteria.
 This operation is used to clean up the history if party or related objects are removed.
 
 **Params properties:** 
+- correlationId: string - (optional) unique id that identifies distributed transaction
 - filter: object - filter parameters
-    - type: string - (optional) type of activities
-    - include_types: string[] - (optional) array of activities types to include into results
-    - exclude_types: string[] - (optional) array of activities types to exclude from results
-    - party_id: string - (optional) unique id of party who performed the activity
-    - ref_id: string - (optional) unique id of related object
-    - parent_id: string - (optional) unique if of parent of related object
-    - ref_party_id: string - (optional) unique id of 3rd party
-    - start: Date - (optional) start of the time range
-    - end: Date - (optional) end of the time range
+  - id: string - (optional) unique section id
+  - search: string - (optional) search by id substring
+  - type: string - (optional) type of activities
+  - include_types: string[] - (optional) array of activities types to include into results
+  - exclude_types: string[] - (optional) array of activities types to exclude from results
+  - party_id: string - (optional) unique id of party who performed the activity
+  - ref_id: string - (optional) unique id of related object
+  - parent_id: string - (optional) unique if of parent of related object
+  - ref_party_id: string - (optional) unique id of 3rd party
+  - from_time: Date - (optional) start of the time range
+  - to_time: Date - (optional) end of the time range
 - callback: (err) => void - callback function
   - err: Error - occured error or null for success
  
-## <a name="client_rest"></a> ActivitiesRestClient class
+## <a name="client_rest"></a> ActivitiesHttpClientV1 class
 
-ActivitiesRestClient is a client that implements HTTP/REST protocol
+ActivitiesHttpClientV1 is a client that implements HTTP protocol
 
 ```javascript
-class ActivitiesRestClient extends RestClient implements IActivitiesClient {
+class ActivitiesHttpClientV1 extends CommandableHttpClient implements IActivitiesClientV1 {
     constructor(config: any);
-    init(refs, callback);
-    open(callback);
-    close(callback);
+    setReferences(references);
+    open(correlationId, callback);
+    close(correlationId, callback);
     getPartyActivities(filter, paging, callback);
     logPartyActivity(activity, callback);
     batchPartyActivities(activities, callback);
@@ -291,48 +296,66 @@ class ActivitiesRestClient extends RestClient implements IActivitiesClient {
 ```
 
 **Constructor config properties:** 
-- transport: object - HTTP transport configuration options
-  - type: string - HTTP protocol - 'http' or 'https' (default is 'http')
+- connection: object - HTTP transport configuration options
+  - protocol: string - HTTP protocol - 'http' or 'https' (default is 'http')
   - host: string - IP address/hostname binding (default is '0.0.0.0')
   - port: number - HTTP port number
 
-## <a name="client_seneca"></a> ActivitiesSenecaClient class
+## <a name="client_seneca"></a> ActivitiesSenecaClientV1 class
 
-ActivitiesSenecaClient is a client that implements Seneca protocol
+ActivitiesSenecaClientV1 is a client that implements Seneca protocol
 
 ```javascript
-class ActivitiesSenecaClient extends SenecaClient implements IActivitiesClient {
+class ActivitiesSenecaClientV1 extends CommandableSenecaClient implements IActivitiesClientV1 {
     constructor(config: any);        
-    init(refs, callback);
-    open(callback);
-    close(callback);
-    getPartyActivities(filter, paging, callback);
-    logPartyActivity(activity, callback);
-    batchPartyActivities(activities, callback);
-    deletePartyActivities(filter, callback);
+    setReferences(references);
+    open(correlationId, callback);
+    close(correlationId, callback);
+    getPartyActivities(correlationId, filter, paging, callback);
+    logPartyActivity(correlationId, activity, callback);
+    batchPartyActivities(correlationId, activities, callback);
+    deletePartyActivities(correlationId, filter, callback);
 }
 ```
 
 **Constructor config properties:** 
-- transport: object - (optional) Seneca transport configuration options. See http://senecajs.org/api/ for details.
-  - type: string - Seneca transport type 
+- connection: object - (optional) Seneca transport configuration options. See http://senecajs.org/api/ for details.
+  - protocol: string - Seneca transport type 
   - host: string - IP address/hostname binding (default is '0.0.0.0')
   - port: number - Seneca port number
 
-## <a name="client_null"></a> ActivitiesNullClient class
+## <a name="client_direct"></a> ActivitiesDirectClientV1 class
 
-ActivitiesNullClient is a dummy client that mimics the real client but doesn't call a microservice. 
+ActivitiesDirectClientV1 is a client that calls controller directly from the same container.
+It can be used for monolytic deployment scenarios.
+
+```javascript
+class ActivitiesDirectClientV1 extends DirectClient implements IActivitiesClientV1 {
+    constructor();        
+    setReferences(references);
+    open(correlationId, callback);
+    close(correlationId, callback);
+    getPartyActivities(correlationId, filter, paging, callback);
+    logPartyActivity(correlationId, activity, callback);
+    batchPartyActivities(correlationId, activities, callback);
+    deletePartyActivities(correlationId, filter, callback);
+}
+```
+
+## <a name="client_null"></a> ActivitiesNullClientV1 class
+
+ActivitiesNullClientV1 is a dummy client that mimics the real client but doesn't call a microservice. 
 It can be useful in testing scenarios to cut dependencies on external microservices.
 
 ```javascript
-class ActivitiesNullClient extends AbstractClient implements IActivitiesClient {
+class ActivitiesNullClientV1 implements IActivitiesClientV1 {
     constructor();        
-    init(refs, callback);
-    open(callback);
-    close(callback);
-    getPartyActivities(filter, paging, callback);
-    logPartyActivity(activity, callback);
-    batchPartyActivities(activities, callback);
-    deletePartyActivities(filter, callback);
+    setReferences(references);
+    open(correlationId, callback);
+    close(correlationId, callback);
+    getPartyActivities(correlationId, filter, paging, callback);
+    logPartyActivity(correlationId, activity, callback);
+    batchPartyActivities(correlationId, activities, callback);
+    deletePartyActivities(correlationId, filter, callback);
 }
 ```
