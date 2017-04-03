@@ -8,17 +8,14 @@ and provides high-level API to access the microservice for simple and productive
 * [Getting started](#get_started)
 * [ReferenceV1 class](#class1)
 * [PartyActivityV1 class](#class2)
-* [DataPage<PartyActivityV1> class](#class3)
 * [IActivitiesClientV1 interface](#interface)
-    - [setReferences()](#operation1)
-    - [open(correlationId, )](#operation2)
-    - [close(correlationId, )](#operation3)
-    - [getPartyActivities()](#operation4)
-    - [logPartyActivity()](#operation5)
-    - [batchPartyActivities()](#operation6)
-    - [deletePartyActivities()](#operation7)
+    - [getPartyActivities()](#operation1)
+    - [logPartyActivity()](#operation2)
+    - [batchPartyActivities()](#operation3)
+    - [deletePartyActivities()](#operation4)
 * [ActivitiesHttpClientV1 class](#client_rest)
 * [ActivitiesSenecaClientV1 class](#client_seneca)
+* [ActivitiesDirectClientV1 class](#client_direct)
 * [ActivitiesNullClientV1 class](#client_null)
 
 ## <a name="install"></a> Installation
@@ -155,14 +152,6 @@ Each activity record is related to:
 - ref_party: Reference - reference to a 3rd party related to this activity
 - details: Object - additional details related to this activity, like % of completion or new status
 
-### <a name="class3"></a> PartyActivityPage class
-
-Represents a paged result with subset of requested PartyActivity objects
-
-**Properties:**
-- data: [PartyActivity] - array of retrieved PartyActivity page
-- count: int - total number of objects in retrieved resultset
-
 ## <a name="interface"></a> IActivitiesClientV1 interface
 
 If you are using Typescript, you can use IActivitiesClientV1 as a common interface across all client implementations. 
@@ -171,9 +160,6 @@ all methods defined in this interface are implemented by all client classes.
 
 ```javascript
 interface IActivitiesClientV1 {
-    setReferences(references);
-    open(correlationId, callback);
-    close(correlationId, callback);
     getPartyActivities(correlationId, filter, paging, callback);
     logPartyActivity(correlationId, activity, callback);
     batchPartyActivities(correlationId, activities, callback);
@@ -181,35 +167,7 @@ interface IActivitiesClientV1 {
 }
 ```
 
-### <a name="operation1"></a> setReferences(references)
-
-Initializes client references. This method is optional. It is used to set references 
-to logger or performance counters.
-
-**Arguments:**
-- refs: References - references to other components 
-  - log: ILogger - reference to logger
-  - counters: ICounters - reference to performance counters
-- callback: (err) => void - callback function
-  - err - Error or null is no error occured
-
-### <a name="operation2"></a> open(correlationId, callback)
-
-Opens connection to the microservice
-
-**Arguments:**
-- callback: (err) => void - callback function
-  - err - Error or null is no error occured
-
-### <a name="operation3"></a> close(correlationId, callback)
-
-Closes connection to the microservice
-
-**Arguments:**
-- callback: (err) => void - callback function
-  - err - Error or null is no error occured
-
-### <a name="operation4"></a> getPartyActivities(correlationId, filter, paging, callback)
+### <a name="operation1"></a> getPartyActivities(correlationId, filter, paging, callback)
 
 Retrieves a list of party activities by specified criteria
 
@@ -235,7 +193,7 @@ Retrieves a list of party activities by specified criteria
   - err: Error - occured error or null for success
   - page: PartyActivityPage - retrieved PartyActivity objects in paged format
 
-### <a name="operation5"></a> logPartyActivity(correlationId, activity, callback)
+### <a name="operation2"></a> logPartyActivity(correlationId, activity, callback)
 
 Log a single party activity
 
@@ -246,7 +204,7 @@ Log a single party activity
   - err: Error - occured error or null for success
   - activity: PartyActivity - logged party activity
 
-### <a name="operation6"></a> batchPartyActivities(correlationId, activities, callback)
+### <a name="operation3"></a> batchPartyActivities(correlationId, activities, callback)
 
 Log multiple party activities
 
@@ -256,7 +214,7 @@ Log multiple party activities
 - callback: (err) => void - callback function
   - err: Error - occured error or null for success
 
-### <a name="operation7"></a> deletePartyActivities(correlationId, filter, callback)
+### <a name="operation4"></a> deletePartyActivities(correlationId, filter, callback)
 
 Deletes party activities that satisfy specified criteria.
 This operation is used to clean up the history if party or related objects are removed.
@@ -349,10 +307,7 @@ It can be useful in testing scenarios to cut dependencies on external microservi
 
 ```javascript
 class ActivitiesNullClientV1 implements IActivitiesClientV1 {
-    constructor();        
-    setReferences(references);
-    open(correlationId, callback);
-    close(correlationId, callback);
+    constructor();
     getPartyActivities(correlationId, filter, paging, callback);
     logPartyActivity(correlationId, activity, callback);
     batchPartyActivities(correlationId, activities, callback);
