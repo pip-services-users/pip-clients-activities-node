@@ -6,10 +6,10 @@ import { DataPage } from 'pip-services-commons-node';
 import { DirectClient } from 'pip-services-net-node';
 
 import { IActivitiesClientV1 } from './IActivitiesClientV1';
-import { IActivitiesBusinessLogic } from 'pip-services-Activities-node';
+//import { IActivitiesBusinessLogic } from 'pip-services-activities-node';
 import { PartyActivityV1 } from './PartyActivityV1';
 
-export class ActivitiesDirectClientV1 extends DirectClient<IActivitiesBusinessLogic> implements IActivitiesClientV1 {
+export class ActivitiesDirectClientV1 extends DirectClient<any> implements IActivitiesClientV1 {
             
     public constructor() {
         super();

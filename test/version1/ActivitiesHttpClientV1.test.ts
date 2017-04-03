@@ -8,7 +8,7 @@ import { ConsoleLogger } from 'pip-services-commons-node';
 
 import { ActivitiesMemoryPersistence } from 'pip-services-activities-node';
 import { ActivitiesController } from 'pip-services-activities-node';
-import { ActivitiesHttpServiceV1 } from 'pip-services-Activities-node';
+import { ActivitiesHttpServiceV1 } from 'pip-services-activities-node';
 import { IActivitiesClientV1 } from '../../src/version1/IActivitiesClientV1';
 import { ActivitiesHttpClientV1 } from '../../src/version1/ActivitiesHttpClientV1';
 import { ActivitiesClientFixtureV1 } from './ActivitiesClientFixtureV1';
