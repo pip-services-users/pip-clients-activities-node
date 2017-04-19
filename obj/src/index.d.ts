@@ -1,2 +1,2 @@
 export * from './version1';
-export { ActivitiesFactory } from './build/ActivitiesFactory';
+export { ActivitiesClientFactory } from './build/ActivitiesClientFactory';
