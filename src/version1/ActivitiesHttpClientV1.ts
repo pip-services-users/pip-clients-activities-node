@@ -11,7 +11,7 @@ import { IActivitiesClientV1 } from './IActivitiesClientV1';
 export class ActivitiesHttpClientV1 extends CommandableHttpClient implements IActivitiesClientV1 {
 
     constructor(config?: any) {
-        super('activities');
+        super('v1/activities');
 
         if (config != null)
             this.configure(ConfigParams.fromValue(config));
