@@ -3,7 +3,7 @@ import { Descriptor } from 'pip-services-commons-node';
 import { FilterParams } from 'pip-services-commons-node';
 import { PagingParams} from 'pip-services-commons-node';
 import { DataPage } from 'pip-services-commons-node';
-import { DirectClient } from 'pip-services-net-node';
+import { DirectClient } from 'pip-services-rpc-node';
 
 import { IActivitiesClientV1 } from './IActivitiesClientV1';
 //import { IActivitiesController } from 'pip-services-activities-node';

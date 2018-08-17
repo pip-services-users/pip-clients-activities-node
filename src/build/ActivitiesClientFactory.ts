@@ -1,5 +1,5 @@
 import { Descriptor } from 'pip-services-commons-node';
-import { Factory } from 'pip-services-commons-node';
+import { Factory } from 'pip-services-components-node';
 
 import { ActivitiesNullClientV1 } from '../version1/ActivitiesNullClientV1';
 import { ActivitiesDirectClientV1 } from '../version1/ActivitiesDirectClientV1';
