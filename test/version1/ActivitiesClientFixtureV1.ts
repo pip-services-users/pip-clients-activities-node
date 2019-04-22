@@ -2,7 +2,7 @@ let _ = require('lodash');
 let async = require('async');
 let assert = require('chai').assert;
 
-import { FilterParams } from 'pip-services-commons-node';
+import { FilterParams } from 'pip-services3-commons-node';
 import { PartyActivityV1 } from '../../src/version1/PartyActivityV1';
 import { IActivitiesClientV1 } from '../../src/version1/IActivitiesClientV1';
 
