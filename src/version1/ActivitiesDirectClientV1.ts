@@ -28,9 +28,9 @@ export class ActivitiesDirectClientV1 extends DirectClient<any> implements IActi
     public logPartyActivity(correlationId: string, activity: PartyActivityV1,
         callback?: (err: any, activity: PartyActivityV1) => void): void {
         let timing = this.instrument(correlationId, 'activities.log_party_activity');
-        this._controller.logPartyActivity(correlationId, activity, (err, page) => {
+        this._controller.logPartyActivity(correlationId, activity, (err, activity) => {
             timing.endTiming();
-            if (callback) callback(err, page);
+            if (callback) callback(err, activity);
         });
     }
 

@@ -16,10 +16,10 @@ class ActivitiesDirectClientV1 extends pip_services3_rpc_node_1.DirectClient {
     }
     logPartyActivity(correlationId, activity, callback) {
         let timing = this.instrument(correlationId, 'activities.log_party_activity');
-        this._controller.logPartyActivity(correlationId, activity, (err, page) => {
+        this._controller.logPartyActivity(correlationId, activity, (err, activity) => {
             timing.endTiming();
             if (callback)
-                callback(err, page);
+                callback(err, activity);
         });
     }
     batchPartyActivities(correlationId, activities, callback) {
