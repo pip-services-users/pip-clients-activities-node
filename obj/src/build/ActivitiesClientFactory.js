@@ -19,6 +19,7 @@ class ActivitiesClientFactory extends pip_services3_components_node_1.Factory {
         this.registerAsType(ActivitiesClientFactory.LambdaClientV1Descriptor, ActivitiesLambdaClientV1_1.ActivitiesLambdaClientV1);
     }
 }
+exports.ActivitiesClientFactory = ActivitiesClientFactory;
 ActivitiesClientFactory.Descriptor = new pip_services3_commons_node_1.Descriptor('pip-services-activities', 'factory', 'default', 'default', '1.0');
 ActivitiesClientFactory.NullClientV1Descriptor = new pip_services3_commons_node_1.Descriptor('pip-services-activities', 'client', 'null', 'default', '1.0');
 ActivitiesClientFactory.DirectClientV1Descriptor = new pip_services3_commons_node_1.Descriptor('pip-services-activities', 'client', 'direct', 'default', '1.0');
@@ -26,5 +27,4 @@ ActivitiesClientFactory.HttpClientV1Descriptor = new pip_services3_commons_node_
 ActivitiesClientFactory.CommandableGrpcClientV1Descriptor = new pip_services3_commons_node_1.Descriptor('pip-services-activities', 'client', 'commandable-grpc', 'default', '1.0');
 ActivitiesClientFactory.GrpcClientV1Descriptor = new pip_services3_commons_node_1.Descriptor('pip-services-activities', 'client', 'grpc', 'default', '1.0');
 ActivitiesClientFactory.LambdaClientV1Descriptor = new pip_services3_commons_node_1.Descriptor('pip-services-activities', 'client', 'lambda', 'default', '1.0');
-exports.ActivitiesClientFactory = ActivitiesClientFactory;
 //# sourceMappingURL=ActivitiesClientFactory.js.map
