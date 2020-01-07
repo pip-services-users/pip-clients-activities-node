@@ -11,6 +11,7 @@ import { ApplicationExceptionFactory } from 'pip-services3-commons-node';
 
 import { PartyActivityV1 } from './PartyActivityV1';
 import { ReferenceV1 } from './ReferenceV1';
+import { PartyActivityObjectReply } from '../protos/activities_v1_pb';
 
 export class ActivityGrpcConverterV1 {
 
@@ -158,6 +159,7 @@ export class ActivityGrpcConverterV1 {
         let obj = new messages.PartyActivity();
 
         obj.setId(activity.id);
+        obj.setOrgId(activity.org_id);
         obj.setTime(StringConverter.toString(activity.time));
         obj.setType(activity.type);
         obj.setParty(ActivityGrpcConverterV1.fromReference(activity.party));
@@ -174,6 +176,7 @@ export class ActivityGrpcConverterV1 {
 
         let activity: PartyActivityV1 = {
             id: obj.getId(),
+            org_id: obj.getOrgId(),
             time: DateTimeConverter.toDateTime(obj.getTime()),
             type: obj.getType(),
             party: ActivityGrpcConverterV1.toReference(obj.getParty()),
